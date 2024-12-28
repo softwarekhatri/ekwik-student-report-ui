@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aptitude Test Report</title>
+  <!-- <script src="https://code.highcharts.com/highcharts.js"></script> -->
+  <script src="https://code.highcharts.com/8.2.2/highcharts.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #3498db;
+      padding: 10px 20px;
+      color: white;
+    }
+    .header img {
+      height: 50px; /* Adjust this according to your logo size */
+    }
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-top: 50px;
+    }
+    h1 {
+      text-align: center;
+      color: #3498db;
+    }
+    .student-info {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .student-info p {
+      margin: 5px 0;
+    }
+    .label {
+      font-weight: bold;
+      color: #333;
+    }
+    .value {
+      color: #555;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Logo -->
+  <div class="header">
+    <img src="/logo.png" alt="Logo"> <!-- Replace with your actual logo path -->
+    <h2>Aptitude Test Report</h2>
+  </div>
+
+  <div class="container">
+    <h1>Student Information</h1>
+    <div class="student-info">
+      <p><span class="label">Name:</span> <span class="value">John Smith</span></p>
+      <p><span class="label">Roll Number:</span> <span class="value">101</span></p>
+      <p><span class="label">Class:</span> <span class="value">8th</span></p>
+      <p><span class="label">Test Date:</span> <span class="value">04/04/2024</span></p>
+    </div>
+    <div class="footer">
+      <p>Generated on: <span id="currentDate"></span></p>
+    </div>
+
+    <!-- Highcharts Chart Container -->
+    <div id="container" style="width: 100%; height: 400px;"></div>
+  </div>
+
+  <script>
+    // Set current date in the footer dynamically
+    const currentDate = new Date().toLocaleDateString();
+    document.getElementById('currentDate').textContent = currentDate;
+  </script>
+
+  <script>
+    // Ensure Highcharts is available before calling it
+    document.addEventListener('DOMContentLoaded', function() {
+      Highcharts.chart('container', {
+        chart: {
+          type: 'bar'
+        },
+        title: {
+          text: 'Student Performance'
+        },
+        xAxis: {
+          categories: ['John Smith', 'Jane Doe', 'Mark Lee', 'Sarah Kim'],
+          title: {
+            text: 'Student Name'
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'Score'
+          }
+        },
+        series: [{
+          name: 'Score',
+          data: [85, 90, 75, 88]
+        }],
+        credits: {
+          enabled: false  // This will remove the Highcharts branding
+        }
+      });
+    });
+  </script>
+</body>
+</html>

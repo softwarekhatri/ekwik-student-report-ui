@@ -1,0 +1,21 @@
+{
+    "name": "student-result-app",
+    "version": "1.0.0",
+    "description": "pdf generation package",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon server.js"
+    },
+    "author": "Amitabh",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^1.7.8",
+        "ejs": "^3.1.10",
+        "express": "^4.21.1",
+        "mime": "^4.0.4",
+        "multer": "^1.4.5-lts.1",
+        "puppeteer": "^23.10.1"
+    },
+    "type": "module"
+}

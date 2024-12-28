@@ -1,0 +1,273 @@
+
+<%- include('layout') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student List</title>
+  <style>
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-family: Arial, sans-serif;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #24b200;
+      color: white;
+      font-weight: bold;
+    }
+
+    td {
+      background-color: #f9f9f9;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f1f1f1; /* Zebra striping */
+    }
+
+    tr:hover td {
+      background-color: #f0f8ff; /* Hover effect */
+    }
+
+    /* Button styling */
+    .downloadBtn {
+      display: inline-block;
+      padding: 8px 15px;
+      background-color: #24b200;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .downloadBtn:hover {
+      background-color: #24b200;
+    }
+
+    .generateBtn {
+      display: inline-block;
+      padding: 8px 15px;
+      background-color: gray;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .generateBtn:hover {
+      background-color: gray;
+    }
+
+    /* a.generate {
+      background-color: blue;
+    } */
+
+    /* Search bar styling */
+    .search-container {
+      margin: 20px 0;
+      text-align: right;
+    }
+    .search-bar, .search-dropdown {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      margin-right: 10px;
+    }
+    .search-icon {
+      position: absolute;
+      margin-left: -30px;
+      margin-top: 9px;
+      cursor: pointer;
+    }
+
+    /* Loader styling */
+    .loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 10px solid #434040; /* Light background color */
+      border-top: 10px solid #24b200; /* Green color for the loader */
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      display: none; /* Hidden by default */
+    }
+
+    /* Spin animation */
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+<!-- Search bar with icon -->
+<div class="search-container">
+  <select id="searchColumn" class="search-dropdown">
+    <option value="studentName">Student Name</option>
+    <option value="examName">Exam Name</option>
+    <option value="rollNo">Roll No</option>
+    <option value="schoolName">School Name</option>
+    <option value="standard">Standard</option>
+    <option value="passingStatus">Passing Status</option>
+    <option value="grade">Grade</option>
+  </select>
+  <input type="text" id="searchInput" class="search-bar" placeholder="Search" value="<%= searchValue %>" onkeyup="searchTable()">
+  <span class="search-icon">&#128269;</span>
+</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Roll No</th>
+        <th>School Name</th>
+        <th>Standard</th>
+        <th>Exam Name</th>
+        <th>Exam Date</th>
+        <th>Exam Date</th>
+        <th>Percentage</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (totalPages === 0) { %>
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 20px;">
+            No students found.
+          </td>
+        </tr>
+      <% } else { %>
+      <% students.forEach(function(student) { %>
+        <tr>
+          <td><%= student.studentData.fullName %></td>
+          <td><%= student.studentData.rollNo %></td>
+          <td><%= student.studentData.schoolName %></td>
+          <td><%= student.studentData.standard %></td>
+          <td><%= student.examData.examName %></td>
+          <td><%= student.examData.examDate %></td>
+          <td><%= student.examData.percentage %>%</td>
+          <td><%= student.examData.passingStatus %></td>
+          <td>
+            <!-- <a href="/download-pdf/<%= student.studentReportId %>" class="downloadBtn">Download PDF</a> -->
+            <a href="#" class="<%= student.reportsData.reportReadyToDownload != 1 ? 'generateBtn' : 'downloadBtn' %> download" onclick="downloadPDF('<%= student.studentReportId %>', `<%= student.reportsData.reportReadyToDownload ? 1 : 0 %>`, `<%= student.studentData.fullName %>`, `<%= student.studentData.rollNo %>`, `<%= student.examData.examName %>`)">
+              <%= student.reportsData.reportReadyToDownload == 1 ? 'Download Report' : 'Generate Report' %>
+               
+              <div class="loader"></div>
+            </a>
+          </td>
+        </tr>
+      <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+  <!-- Pagination controls -->
+  <!-- <div class="pagination" id="paginationControls">
+    
+  </div> -->
+  <div class="pagination">
+    <% if (page > 1) { %>
+      <a href="/studentList?page=<%= page - 1 %>&limit=20">Previous</a>
+    <% } %>
+
+    <% if (page < totalPages) { %>
+      <a href="/studentList?page=<%= page + 1 %>&limit=20">Next</a>
+    <% } %>
+  </div>
+  <script>
+    function searchTable() {
+      const inputVal = document.getElementById('searchInput').value.toLowerCase();
+      const columnVal = document.getElementById('searchColumn').value;
+      window.location.href= "/studentList?page=1&limit=20&key="+columnVal+"&value="+inputVal;
+    }
+
+    const generatePDF = async(studentId) => {
+      try {
+          // Send the file to the generate pdf via Fetch API
+          const response = await fetch(`/generate-pdf/${studentId}`, {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+        // console.log("Response:::::", response);
+        // const result = response.json();
+        //need to check
+        alert("Student report generation request has been successfully accepted");
+        console.log(result); // Process result (e.g., show success message, etc.)
+      } else {
+        alert('Failed to generate the report');
+      }
+        return;
+      }catch(error) {
+          console.error('Error generating the PDF:', error);
+          return;
+      }
+    }
+    function downloadPDF(studentId, reportReadyToDownload = '', fullName, rollNo, examName) {
+      const button = document.querySelector('.download');
+      console.log("In download pdf");
+      if (reportReadyToDownload == 0) {
+        generatePDF(studentId);
+        return;
+      }
+      // Show loader when the button is clicked
+      
+      const loader = document.querySelector('.loader');
+      loader.style.display = 'inline-block'; // Show the loader
+      button.style.pointerEvents = 'none'; // Disable the button to prevent multiple clicks
+
+      // Send a request to download the PDF via Fetch API
+      fetch(`/download-pdf/${studentId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/pdf'
+        }
+      })
+      .then(response => {
+        // Check if the response is ok (status 200)
+        if (response.ok) {
+          return response.blob();  // Get the binary PDF data
+        } else {
+          throw new Error('Failed to download PDF');
+        }
+      }) 
+      .then(blob => {
+        // Create a link element to trigger the download
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = `${fullName}_${rollNo}_${examName}.pdf`;  // Set the filename
+        link.click();  // Trigger the download
+        URL.revokeObjectURL(url);  // Clean up the URL object
+
+        // Hide the loader and enable the button again
+        loader.style.display = 'none';
+        button.style.pointerEvents = 'auto'; // Re-enable the button
+    })
+    .catch(error => {
+      console.error('Error downloading the PDF:', error);
+
+      // Hide the loader and enable the button again in case of error
+      loader.style.display = 'none';
+      button.style.pointerEvents = 'auto'; // Re-enable the button
+    });
+    }
+  </script>
+  
+</body>
+</html>

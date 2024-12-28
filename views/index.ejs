@@ -1,0 +1,58 @@
+<%- include('layout') %>
+
+<h1>Upload Student Data</h1>
+<form id="uploadForm">
+  <label for="file">Choose Excel file:</label>
+  <input type="file" id="fileInput" name="file" accept=".xlsx, .xls" required />
+  <button type="submit">Upload</button>
+</form>
+
+<div id="loading" style="display: none;">Uploading...</div> <!-- Loading indicator -->
+
+<script>
+  document.getElementById('uploadForm').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+
+    if (!file) {
+      alert("Please select a file to upload");
+      return;
+    }
+
+    // Show loading message
+    document.getElementById('loading').style.display = 'block';
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      // Send the file to the server via Fetch API
+      const response = await fetch('/upload-excel', {
+        method: 'POST',
+        body: formData,
+      });
+      // Hide loading message
+      document.getElementById('loading').style.display = 'none';
+      const result = await response.json();
+      console.log("Resssponse:::", response);
+      console.log("Result::", result);
+      if (response.ok) {
+        // console.log("Response:::::", response);
+        
+        //need to check
+        window.location.reload();
+        alert(result.message);
+        console.log(result); // Process result (e.g., show success message, etc.)
+      } else {
+        // console.log("Result::", result.);
+        alert(result.message);
+      }
+    } catch (error) {
+      document.getElementById('loading').style.display = 'none';
+      alert('Error uploading the file');
+      console.error("Error uploading the file::", error);
+    }
+  });
+</script>
