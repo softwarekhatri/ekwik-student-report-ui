@@ -1,273 +1,527 @@
-
 <%- include('layout') %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student List</title>
-  <style>
-    /* Table styling */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-      font-family: Arial, sans-serif;
-    }
+  <!DOCTYPE html>
+  <html lang="en">
 
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border: 1px solid #ddd;
-    }
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List</title>
+    <style>
+      /* Table styling */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-family: Arial, sans-serif;
+      }
 
-    th {
-      background-color: #24b200;
-      color: white;
-      font-weight: bold;
-    }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border: 1px solid #ddd;
+      }
 
-    td {
-      background-color: #f9f9f9;
-    }
+      th {
+        background-color: #24b200;
+        color: white;
+        font-weight: bold;
+      }
 
-    tr:nth-child(even) td {
-      background-color: #f1f1f1; /* Zebra striping */
-    }
+      td {
+        background-color: #f9f9f9;
+      }
 
-    tr:hover td {
-      background-color: #f0f8ff; /* Hover effect */
-    }
+      tr:nth-child(even) td {
+        background-color: #f1f1f1;
+        /* Zebra striping */
+      }
 
-    /* Button styling */
-    .downloadBtn {
-      display: inline-block;
-      padding: 8px 15px;
-      background-color: #24b200;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      text-align: center;
-      font-size: 14px;
-    }
+      tr:hover td {
+        background-color: #f0f8ff;
+        /* Hover effect */
+      }
 
-    .downloadBtn:hover {
-      background-color: #24b200;
-    }
+      /* Button styling */
+      .downloadBtn {
+        display: inline-block;
+        padding: 8px 15px;
+        background-color: #24b200;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 14px;
+      }
 
-    .generateBtn {
-      display: inline-block;
-      padding: 8px 15px;
-      background-color: gray;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      text-align: center;
-      font-size: 14px;
-    }
+      .downloadBtn:hover {
+        background-color: #24b200;
+      }
 
-    .generateBtn:hover {
-      background-color: gray;
-    }
+      .deleteBtn {
+        display: inline-block;
+        padding: 8px 15px;
+        background-color: #b20003;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 14px;
+        border-color: red;
+      }
 
-    /* a.generate {
+      .deleteBtn:hover {
+        background-color: #b20003;
+      }
+
+      .generateBtn {
+        display: inline-block;
+        padding: 8px 15px;
+        background-color: gray;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .generateBtn:hover {
+        background-color: gray;
+      }
+
+      /* a.generate {
       background-color: blue;
     } */
 
-    /* Search bar styling */
-    .search-container {
-      margin: 20px 0;
-      text-align: right;
-    }
-    .search-bar, .search-dropdown {
-      padding: 8px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ddd;
-      margin-right: 10px;
-    }
-    .search-icon {
-      position: absolute;
-      margin-left: -30px;
-      margin-top: 9px;
-      cursor: pointer;
-    }
+      /* Search bar styling */
+      .search-container {
+        margin: 20px 0;
+        text-align: right;
+      }
 
-    /* Loader styling */
-    .loader {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border: 10px solid #434040; /* Light background color */
-      border-top: 10px solid #24b200; /* Green color for the loader */
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
-      display: none; /* Hidden by default */
-    }
+      .search-bar,
+      .search-dropdown {
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        margin-right: 10px;
+      }
 
-    /* Spin animation */
-    @keyframes spin {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-  </style>
-</head>
-<body>
-<!-- Search bar with icon -->
-<div class="search-container">
-  <select id="searchColumn" class="search-dropdown">
-    <option value="studentName">Student Name</option>
-    <option value="examName">Exam Name</option>
-    <option value="rollNo">Roll No</option>
-    <option value="schoolName">School Name</option>
-    <option value="standard">Standard</option>
-    <option value="passingStatus">Passing Status</option>
-    <option value="grade">Grade</option>
-  </select>
-  <input type="text" id="searchInput" class="search-bar" placeholder="Search" value="<%= searchValue %>" onkeyup="searchTable()">
-  <span class="search-icon">&#128269;</span>
-</div>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Roll No</th>
-        <th>School Name</th>
-        <th>Standard</th>
-        <th>Exam Name</th>
-        <th>Exam Date</th>
-        <th>Exam Date</th>
-        <th>Percentage</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (totalPages === 0) { %>
+      .search-icon {
+        position: absolute;
+        margin-left: -30px;
+        margin-top: 9px;
+        cursor: pointer;
+      }
+
+      /* Loader styling */
+      .loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 10px solid #434040;
+        /* Light background color */
+        border-top: 10px solid #24b200;
+        /* Green color for the loader */
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+        display: none;
+        /* Hidden by default */
+      }
+
+      /* Spin animation */
+      @keyframes spin {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        /* Enable flexbox on the modal container */
+        justify-content: center;
+        /* Horizontally center the modal */
+        align-items: center;
+        /* Vertically center the modal */
+        position: fixed;
+        /* Fixed positioning to cover the full screen */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Semi-transparent background */
+        z-index: 1000;
+        /* Ensures the modal appears on top of other content */
+      }
+
+      /* Modal Content */
+      .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+        width: 300px;
+        /* Set the width of the modal */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Button Styles */
+      .modal-button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .modal-button:hover {
+        background-color: #45a049;
+      }
+
+      #cancelBtn {
+        background-color: #f44336;
+        /* Red color for cancel */
+      }
+
+      #cancelBtn:hover {
+        background-color: #e53935;
+      }
+
+      /* Overlay styling to freeze the screen */
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Semi-transparent black */
+        z-index: 999;
+        /* Make sure it appears on top of all content */
+        display: none;
+        /* Hidden by default */
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Search bar with icon -->
+    <div class="search-container">
+      <button class="deleteBtn" id="deleteSelectedBtn" onclick="deleteMultipleRecords()">Delete Selected</button>
+      <select id="searchColumn" class="search-dropdown">
+        <option value="studentName">Student Name</option>
+        <option value="examName">Exam Name</option>
+        <option value="rollNo">Roll No</option>
+        <option value="schoolName">School Name</option>
+        <option value="standard">Standard</option>
+        <option value="passingStatus">Passing Status</option>
+        <option value="grade">Grade</option>
+      </select>
+      <input type="text" id="searchInput" class="search-bar" placeholder="Search" value="<%= searchValue %>"
+        onkeyup="searchTable()">
+      <span class="search-icon">&#128269;</span>
+    </div>
+    <table>
+      <thead>
         <tr>
-          <td colspan="8" style="text-align: center; padding: 20px;">
-            No students found.
-          </td>
+          <th><input type="checkbox" id="selectAllHeader" onclick="toggleSelectAll()"></th>
+          <th>Name</th>
+          <th>Roll No</th>
+          <th>School Name</th>
+          <th>Standard</th>
+          <th>Exam Name</th>
+          <th>Exam Date</th>
+          <th>Percentage</th>
+          <th>Status</th>
+          <th>Actions</th>
         </tr>
-      <% } else { %>
-      <% students.forEach(function(student) { %>
-        <tr>
-          <td><%= student.studentData.fullName %></td>
-          <td><%= student.studentData.rollNo %></td>
-          <td><%= student.studentData.schoolName %></td>
-          <td><%= student.studentData.standard %></td>
-          <td><%= student.examData.examName %></td>
-          <td><%= student.examData.examDate %></td>
-          <td><%= student.examData.percentage %>%</td>
-          <td><%= student.examData.passingStatus %></td>
-          <td>
-            <!-- <a href="/download-pdf/<%= student.studentReportId %>" class="downloadBtn">Download PDF</a> -->
-            <a href="#" class="<%= student.reportsData.reportReadyToDownload != 1 ? 'generateBtn' : 'downloadBtn' %> download" onclick="downloadPDF('<%= student.studentReportId %>', `<%= student.reportsData.reportReadyToDownload ? 1 : 0 %>`, `<%= student.studentData.fullName %>`, `<%= student.studentData.rollNo %>`, `<%= student.examData.examName %>`)">
-              <%= student.reportsData.reportReadyToDownload == 1 ? 'Download Report' : 'Generate Report' %>
-               
-              <div class="loader"></div>
-            </a>
-          </td>
-        </tr>
-      <% }) %>
-      <% } %>
-    </tbody>
-  </table>
-  <!-- Pagination controls -->
-  <!-- <div class="pagination" id="paginationControls">
-    
-  </div> -->
-  <div class="pagination">
-    <% if (page > 1) { %>
-      <a href="/studentList?page=<%= page - 1 %>&limit=20">Previous</a>
-    <% } %>
+      </thead>
+      <tbody>
+        <% if (totalPages===0) { %>
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 20px;">
+              No students found.
+            </td>
+          </tr>
+          <% } else { %>
+            <% students.forEach(function(student) { %>
+              <tr>
+                <td><input type="checkbox" class="student-checkbox" value="<%= student.studentReportId %>"></td>
+                <td>
+                  <%= student.studentData.fullName %>
+                </td>
+                <td>
+                  <%= student.studentData.rollNo %>
+                </td>
+                <td>
+                  <%= student.studentData.schoolName %>
+                </td>
+                <td>
+                  <%= student.studentData.standard %>
+                </td>
+                <td>
+                  <%= student.examData.examName %>
+                </td>
+                <td>
+                  <%= student.examData.examDate %>
+                </td>
+                <td>
+                  <%= student.examData.percentage %>%
+                </td>
+                <td>
+                  <%= student.examData.passingStatus %>
+                </td>
+                <td>
+                  <!-- <a href="/download-pdf/<%= student.studentReportId %>" class="downloadBtn">Download PDF</a> -->
+                  <a href="#"
+                    class="<%= student.reportsData.reportReadyToDownload != 1 ? 'generateBtn' : 'downloadBtn' %> download"
+                    onclick="downloadPDF('<%= student.studentReportId %>', `<%= student.reportsData.reportReadyToDownload ? 1 : 0 %>`, `<%= student.studentData.fullName %>`, `<%= student.studentData.rollNo %>`, `<%= student.examData.examName %>`)">
+                    <%= student.reportsData.reportReadyToDownload==1 ? 'Download Report' : 'Generate Report' %>
 
-    <% if (page < totalPages) { %>
-      <a href="/studentList?page=<%= page + 1 %>&limit=20">Next</a>
-    <% } %>
-  </div>
-  <script>
-    function searchTable() {
-      const inputVal = document.getElementById('searchInput').value.toLowerCase();
-      const columnVal = document.getElementById('searchColumn').value;
-      window.location.href= "/studentList?page=1&limit=20&key="+columnVal+"&value="+inputVal;
-    }
+                      <div class="loader"></div>
+                  </a>
+                  <a href="#" class="deleteBtn" onclick="showConfirmModal('<%= student.studentReportId %>')">
+                    Delete
+                  </a>
+                </td>
+              </tr>
+              <% }) %>
+                <% } %>
+      </tbody>
+    </table>
 
-    const generatePDF = async(studentId) => {
-      try {
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+      <div class="modal-content">
+        <h3 id="confirmModalMessage">Are you sure you want to delete this record?</h3>
+        <button id="confirmBtn" class="modal-button">Yes</button>
+        <button id="cancelBtn" class="modal-button">No</button>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <% if (page> 1) { %>
+        <a href="/studentList?page=<%= page - 1 %>&limit=20">Previous</a>
+        <% } %>
+
+          <% if (page < totalPages) { %>
+            <a href="/studentList?page=<%= page + 1 %>&limit=20">Next</a>
+            <% } %>
+    </div>
+    <!-- Add the overlay element -->
+    <div id="overlay" style="display: none;"></div>
+    <script>
+
+      // This variable will hold the student ID to be deleted
+      let studentIdToDelete = null;
+      let multipleRecordsToDelete = [];
+
+      // Function to show the confirmation modal
+      const showConfirmModal = (studentId) => {
+        // Store the studentId for deletion
+        studentIdToDelete = studentId;
+
+        // Show the modal
+        document.getElementById("confirmModalMessage").textContent = `Are you sure you want to delete this record?`;
+        document.getElementById("confirmModal").style.display = "flex";
+      };
+
+      // Function to show the confirmation modal for multiple records
+      const showConfirmModalMultiple = (studentIds) => {
+        multipleRecordsToDelete = studentIds;
+        document.getElementById("confirmModalMessage").textContent = `Are you sure you want to delete ${studentIds.length} records?`;
+        document.getElementById("confirmModal").style.display = "flex";
+      };
+
+      // Function to hide the confirmation modal
+      const hideConfirmModal = () => {
+        document.getElementById("confirmModal").style.display = "none";
+      };
+
+      // Function to handle the deletion of the student record
+      const deleteRecord = async () => {
+        if (studentIdToDelete === null) {
+          return; // No student ID set
+        }
+
+        try {
+          const response = await fetch(`/delete-record/${studentIdToDelete}`, {
+            method: 'GET'
+          });
+
+          if (response.ok) {
+            alert("Student record successfully deleted");
+            // console.log("Record deleted:", studentIdToDelete);
+            window.location.href = "/studentList";
+            // You can refresh the page or update the UI accordingly
+          } else {
+            alert('Failed to delete the report');
+          }
+        } catch (error) {
+          console.error('Error deleting the record:', error);
+          alert('An error occurred while deleting the record');
+        } finally {
+          hideConfirmModal(); // Close the modal after the action is taken
+        }
+      };
+
+      // Event listeners for modal buttons
+      document.getElementById("confirmBtn").addEventListener("click", () => {
+        if (multipleRecordsToDelete.length > 0) {
+          deleteSelected();  // Delete multiple records
+        } else {
+          deleteRecord();  // Delete single record
+        }
+      });
+      document.getElementById("cancelBtn").addEventListener("click", hideConfirmModal);
+
+      // Toggle Select All function
+      const toggleSelectAll = () => {
+        const selectAllCheckbox = document.getElementById('selectAllHeader');
+        const checkboxes = document.querySelectorAll('.student-checkbox');
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = selectAllCheckbox.checked;
+        });
+      };
+
+      // Function to delete selected students (multiple)
+      const deleteMultipleRecords = () => {
+        const selectedIds = [];
+        const checkboxes = document.querySelectorAll('.student-checkbox:checked');
+        checkboxes.forEach((checkbox) => {
+          selectedIds.push(checkbox.value);
+        });
+
+        if (selectedIds.length > 0) {
+          // Show modal for multiple deletions
+          showConfirmModalMultiple(selectedIds);
+        } else {
+          alert("No students selected.");
+        }
+      };
+
+      // Function to delete selected records (multiple)
+      const deleteSelected = async () => {
+        if (multipleRecordsToDelete.length === 0) {
+          alert("No students selected.");
+          return;
+        }
+
+        try {
+          const response = await fetch('/delete-records', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentIds: multipleRecordsToDelete })
+          });
+
+          if (response.ok) {
+            alert("Selected records deleted successfully.");
+            window.location.reload();  // Refresh page after deletion
+          } else {
+            alert("Failed to delete selected records.");
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert("Error deleting records.");
+        } finally {
+          hideConfirmModal();  // Close the modal after action
+        }
+      };
+
+      function searchTable() {
+        const inputVal = document.getElementById('searchInput').value.toLowerCase();
+        const columnVal = document.getElementById('searchColumn').value;
+        window.location.href = "/studentList?page=1&limit=20&key=" + columnVal + "&value=" + inputVal;
+      }
+
+      const generatePDF = async (studentId) => {
+        try {
           // Send the file to the generate pdf via Fetch API
           const response = await fetch(`/generate-pdf/${studentId}`, {
             method: 'POST'
-        });
+          });
 
-        if (response.ok) {
-        // console.log("Response:::::", response);
-        // const result = response.json();
-        //need to check
-        alert("Student report generation request has been successfully accepted");
-        console.log(result); // Process result (e.g., show success message, etc.)
-      } else {
-        alert('Failed to generate the report');
-      }
-        return;
-      }catch(error) {
+          if (response.ok) {
+            // console.log("Response:::::", response);
+            // const result = response.json();
+            //need to check
+            alert("Student report generation request has been successfully accepted");
+            // console.log(result); // Process result (e.g., show success message, etc.)
+          } else {
+            alert('Failed to generate the report');
+          }
+          return;
+        } catch (error) {
           console.error('Error generating the PDF:', error);
           return;
-      }
-    }
-    function downloadPDF(studentId, reportReadyToDownload = '', fullName, rollNo, examName) {
-      const button = document.querySelector('.download');
-      console.log("In download pdf");
-      if (reportReadyToDownload == 0) {
-        generatePDF(studentId);
-        return;
-      }
-      // Show loader when the button is clicked
-      
-      const loader = document.querySelector('.loader');
-      loader.style.display = 'inline-block'; // Show the loader
-      button.style.pointerEvents = 'none'; // Disable the button to prevent multiple clicks
-
-      // Send a request to download the PDF via Fetch API
-      fetch(`/download-pdf/${studentId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/pdf'
         }
-      })
-      .then(response => {
-        // Check if the response is ok (status 200)
-        if (response.ok) {
-          return response.blob();  // Get the binary PDF data
-        } else {
-          throw new Error('Failed to download PDF');
+      }
+      function downloadPDF(studentId, reportReadyToDownload = '', fullName, rollNo, examName) {
+        const button = document.querySelector('.download');
+        // console.log("In download pdf");
+        if (reportReadyToDownload == 0) {
+          generatePDF(studentId);
+          return;
         }
-      }) 
-      .then(blob => {
-        // Create a link element to trigger the download
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.download = `${fullName}_${rollNo}_${examName}.pdf`;  // Set the filename
-        link.click();  // Trigger the download
-        URL.revokeObjectURL(url);  // Clean up the URL object
+        // Show loader when the button is clicked
+        document.getElementById('overlay').style.display = 'block';
+        const loader = document.querySelector('.loader');
+        loader.style.display = 'inline-block'; // Show the loader
+        button.style.pointerEvents = 'none'; // Disable the button to prevent multiple clicks
 
-        // Hide the loader and enable the button again
-        loader.style.display = 'none';
-        button.style.pointerEvents = 'auto'; // Re-enable the button
-    })
-    .catch(error => {
-      console.error('Error downloading the PDF:', error);
+        // Send a request to download the PDF via Fetch API
+        fetch(`/download-pdf/${studentId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/pdf'
+          }
+        })
+          .then(response => {
+            // Check if the response is ok (status 200)
+            if (response.ok) {
+              return response.blob();  // Get the binary PDF data
+            } else {
+              throw new Error('Failed to download PDF');
+            }
+          })
+          .then(blob => {
+            // Create a link element to trigger the download
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = `${fullName}_${rollNo}_${examName}.pdf`;  // Set the filename
+            link.click();  // Trigger the download
+            URL.revokeObjectURL(url);  // Clean up the URL object
 
-      // Hide the loader and enable the button again in case of error
-      loader.style.display = 'none';
-      button.style.pointerEvents = 'auto'; // Re-enable the button
-    });
-    }
-  </script>
-  
-</body>
-</html>
+            // Hide the loader and enable the button again
+            document.getElementById('overlay').style.display = 'none';
+            loader.style.display = 'none';
+            button.style.pointerEvents = 'auto'; // Re-enable the button
+          })
+          .catch(error => {
+            console.error('Error downloading the PDF:', error);
+
+            // Hide the loader and enable the button again in case of error
+            document.getElementById('overlay').style.display = 'none';
+            loader.style.display = 'none';
+            button.style.pointerEvents = 'auto'; // Re-enable the button
+          });
+      }
+    </script>
+
+  </body>
+
+  </html>

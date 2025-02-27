@@ -9,9 +9,16 @@ RUN apk add --no-cache \
     freetype \
     harfbuzz \
     ca-certificates \
-    ttf-freefont
+    ttf-freefont \
+    libstdc++ \
+    wqy-zenhei \
+    udev \
+    bash \
+    font-noto \
+    font-noto-cjk
 
-RUN npm install -g nodemon
+# Install pm2 globally
+RUN npm install -g pm2
 # Copy package.json and package-lock.json files
 COPY package*.json ./
 # Install project dependencies
@@ -22,5 +29,5 @@ COPY . .
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 # Expose the application port (change if your app uses a different port)
 EXPOSE 3025
-# Start the application
-CMD ["npm", "run", "dev"]
+# Start the application in foreground mode
+CMD ["pm2-runtime", "start", "server.js", "--name", "student-result-app"]

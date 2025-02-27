@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
-    padding: 20px;
+    padding: 0 20px 20px 20px;
   }
 
   .navbar {
@@ -95,3 +95,16 @@ body {
         break-after: always;
     }
   }
+
+.phantivostamp {
+  height: 40px;
+  border: none; 
+  overflow: hidden; 
+  margin-top:0; 
+}
+
+@media (max-width: 768px) {
+  .phantivostamp {
+      height: 60px;
+  }
+}
