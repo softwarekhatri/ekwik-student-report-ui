@@ -364,7 +364,6 @@
 
           if (response.ok) {
             alert("Student record successfully deleted");
-            // console.log("Record deleted:", studentIdToDelete);
             window.location.href = "/studentList";
             // You can refresh the page or update the UI accordingly
           } else {
@@ -455,9 +454,6 @@
           });
 
           if (response.ok) {
-            // console.log("Response:::::", response);
-            // const result = response.json();
-            //need to check
             alert("Student report generation request has been successfully accepted");
             // console.log(result); // Process result (e.g., show success message, etc.)
           } else {
@@ -471,7 +467,6 @@
       }
       function downloadPDF(studentId, reportReadyToDownload = '', fullName, rollNo, examName) {
         const button = document.querySelector('.download');
-        // console.log("In download pdf");
         if (reportReadyToDownload == 0) {
           generatePDF(studentId);
           return;

@@ -37,12 +37,9 @@
         document.getElementById('loading').style.display = 'none';
         const result = await response.json();
         if (response.ok) {
-          // console.log("Response:::::", response);
-          //need to check
           window.location.reload();
           alert(result.message); // Process result (e.g., show success message, etc.)
         } else {
-          // console.log("Result::", result.);
           const details = result.details ? `\nMore Details: ${result.details}` : "";
           alert(result.message + details);
         }

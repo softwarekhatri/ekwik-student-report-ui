@@ -1,7 +1,15 @@
 import axios from 'axios';
 
 // Base URL of your API
-const baseURL = 'http://ec2-3-92-139-178.compute-1.amazonaws.com:9999';  // Example API
+let baseURL = 'http://13.61.73.87:9999';
+
+export const updateBaseUrl = (newBaseURL) => {
+  if (!newBaseURL) {
+    return { message: 'New base url is required'};
+  }
+  baseURL = newBaseURL;
+  return { message: `Base URL updated successfully: ${baseURL}` };
+};
 
 // Axios GET request function
 export const fetchStudentsList = async (page, key, value) => {
@@ -74,7 +82,6 @@ export const uploadStudentData = async (form, formHeaders) => {
 };
 
 export const generatePDF = async (studentReportId) => {
-  console.log("studentReportId::", studentReportId);
   try {
     const response = await axios.post(`${baseURL}/students/report/generate/${studentReportId}`, {});
     return response.data.message;
@@ -85,7 +92,6 @@ export const generatePDF = async (studentReportId) => {
 };
 
 export const deleteStudentReport = async (studentReportId) => {
-  console.log("studentReportId::", studentReportId);
   try {
     const response = await axios.delete(`${baseURL}/students/report/${studentReportId}`, {});
     return response.data.message;
@@ -96,10 +102,8 @@ export const deleteStudentReport = async (studentReportId) => {
 };
 
 export const deleteMultipleStudentRecords = async (studentReportIds) => {
-  console.log("deleteMultipleStudentRecords studentReportId::", studentReportIds);
   try {
     const response = await axios.delete(`${baseURL}/students/report`, { data: studentReportIds });
-    console.log("response deleteMultipleStudentRecords:::", response.data);
     return response.data.message;
   } catch (error) {
     console.error('Error in delete multiple records::', error);
